@@ -1,19 +1,34 @@
-window.addEventListener('DOMContentLoaded', function () {
-  'use strict';
+window.addEventListener("DOMContentLoaded", function () {
+  "use strict";
 
+  (function () {
+    const scrollLinks = document.querySelectorAll("a.scroll-link");
+
+    for (let i = 0; i < scrollLinks.length; i++) {
+      scrollLinks[i].addEventListener("click", function (e) {
+        e.preventDefault();
+        const id = scrollLinks[i].getAttribute("href");
+        document.querySelector(id).scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    }
+  })();
+
+  //timer
   function countTimer(deadline) {
-
-    const addZero = num => {
+    const addZero = (num) => {
       if (num <= 9) {
-        return '0' + num;
+        return "0" + num;
       } else {
         return num;
       }
     };
 
-    let timeHours = document.querySelector('#timer-hours'),
-      timeMinutes = document.querySelector('#timer-minutes'),
-      timeSeconds = document.querySelector('#timer-seconds');
+    let timeHours = document.querySelector("#timer-hours"),
+      timeMinutes = document.querySelector("#timer-minutes"),
+      timeSeconds = document.querySelector("#timer-seconds");
 
     function getTimeRemaining() {
       let dateStop = new Date(deadline).getTime(),
@@ -26,9 +41,9 @@ window.addEventListener('DOMContentLoaded', function () {
         timeRemaining,
         hours,
         minutes,
-        seconds
-      }
-    };
+        seconds,
+      };
+    }
 
     function updateClock() {
       let timer = getTimeRemaining();
@@ -42,8 +57,50 @@ window.addEventListener('DOMContentLoaded', function () {
       }
     }
     updateClock();
+  }
+
+  countTimer("01 July 2021");
+
+  //menu
+  const toggleMenu = () => {
+    const btnMenu = document.querySelector(".menu");
+    const menu = document.querySelector("menu");
+    const closeBtn = document.querySelector(".close-btn");
+    const menuItems = menu.querySelectorAll("ul>li");
+
+    const handlerMenu = () => {
+      menu.classList.toggle("active-menu");
+    };
+
+    btnMenu.addEventListener("click", handlerMenu);
+    closeBtn.addEventListener("click", handlerMenu);
+    menuItems.forEach((elem) => {
+      elem.addEventListener("click", handlerMenu);
+    });
   };
+  toggleMenu();
 
-  countTimer('01 July 2021');
+  //popup
+  const togglePopUp = () => {
+    const popupBtn = document.querySelectorAll(".popup-btn");
+    const popup = document.querySelector(".popup");
+    const popupClose = document.querySelector(".popup-close");
 
+    const closePopup = () => {
+      popup.style.display = "none";
+    };
+
+    popupBtn.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        popup.style.display = "block";
+      });
+    });
+    popupClose.addEventListener("click", closePopup);
+    popup.addEventListener("click", (e) => {
+      if (!e.target.closest(".popup-content")) {
+        closePopup();
+      }
+    });
+  };
+  togglePopUp();
 });
