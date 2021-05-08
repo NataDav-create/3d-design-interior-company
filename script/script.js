@@ -84,7 +84,6 @@ window.addEventListener("DOMContentLoaded", function () {
   const togglePopUp = () => {
     const popupBtn = document.querySelectorAll(".popup-btn");
     const popup = document.querySelector(".popup");
-    const popupClose = document.querySelector(".popup-close");
 
     const closePopup = () => {
       popup.style.display = "none";
@@ -95,9 +94,11 @@ window.addEventListener("DOMContentLoaded", function () {
         popup.style.display = "block";
       });
     });
-    popupClose.addEventListener("click", closePopup);
+
     popup.addEventListener("click", (e) => {
-      if (!e.target.closest(".popup-content")) {
+      if (e.target.classList.contains("popup-close")) {
+        closePopup();
+      } else if (!e.target.closest(".popup-content")) {
         closePopup();
       }
     });
