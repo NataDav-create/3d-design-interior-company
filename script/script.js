@@ -251,6 +251,8 @@ window.addEventListener("DOMContentLoaded", function () {
       calcDay = document.querySelector(".calc-day"),
       calcCount = document.querySelector(".calc-count"),
       totalValue = document.getElementById("total");
+    let countId,
+      count = 0;
 
     const countSum = () => {
       let total = 0,
@@ -272,9 +274,20 @@ window.addEventListener("DOMContentLoaded", function () {
 
       if (typeValue && squareValue) {
         total = price * typeValue * squareValue * countValue * dayValue;
-      } 
+        const step = Math.round((total / 100) * 24);
+        countId = setInterval(() => {
+          if (count >= total) {
+            clearInterval(countId);
+            totalValue.textContent = Math.floor(total);
+          } else {
+            count += step;
+            totalValue.textContent = count;
+          }
+        }, 37);
+      } else {
+        totalValue.textContent = total;
+      }
 
-      totalValue.textContent = total;
     };
 
     calcBlock.addEventListener("change", (e) => {
@@ -286,6 +299,8 @@ window.addEventListener("DOMContentLoaded", function () {
         target.matches(".calc-day") ||
         target.matches(".calc-count")
       ) {
+        clearInterval(countId);
+        count = 0;
         countSum();
       }
     });
