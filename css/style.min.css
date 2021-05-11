@@ -540,6 +540,7 @@ main a {
 }
 
 .command__photo {
+  transition: all 0.4s;
   width: 225px;
   border-radius: 50%
 }
