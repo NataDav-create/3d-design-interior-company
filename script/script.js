@@ -228,4 +228,19 @@ window.addEventListener("DOMContentLoaded", function () {
   };
 
   slider();
+
+  const hoverImages = () => {
+    let commandPhotos = document.querySelectorAll(".command__photo");
+    commandPhotos.forEach((photo) => {
+      let src = photo.src;
+      photo.addEventListener("mouseover", (e) => {
+        let target = e.target;
+        photo.src = target.dataset.img;
+      });
+      photo.addEventListener("mouseleave", () => {
+        photo.src = src;
+      });
+    });
+  };
+  hoverImages();
 });
