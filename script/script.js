@@ -344,35 +344,26 @@ window.addEventListener("DOMContentLoaded", function () {
   };
   validFormPhone();
 
-  const sendForm = () => {
+  const loading = (elem) => {
+    const spinner = `<div class="loadingio-spinner-reload-h1gj4teliw8"><div class="ldio-12kxbiqkfwpi"><div><div></div><div></div><div></div></div></div></div>`;
+    elem.innerHTML = spinner
+  };
+
+  const sendForm = (formID) => {
     const errorMessage = 'Something went wrong...',
-      loadMessage = 'Loading...',
+      // loadMessage = 'Loading...',
       successMessage = 'Thank you! we will connect with you soon';
 
-    const form = document.getElementById('form1');
+    const form = document.getElementById(formID);
 
     const statusMessage = document.createElement('div');
-    statusMessage.style.cssText = 'font-size: 2rem';
+    statusMessage.style.cssText = 'font-size: 1.5rem; color: #fff';
 
     form.addEventListener('submit', e => {
       e.preventDefault();
       form.appendChild(statusMessage);
-
-      const request = new XMLHttpRequest();
-      request.addEventListener('readystatechange', () => {
-        statusMessage.textContent = loadMessage;
-
-        if (request.readyState !== 4) {
-          return;
-        }
-        if (request.readyState === 4 && request.status === 200) {
-          statusMessage.textContent = successMessage;
-        } else {
-          statusMessage.textContent = errorMessage;
-        }
-      });
-      request.open('POST', './server.php');
-      request.setRequestHeader('Content-Type', 'application/json');
+      // statusMessage.textContent = loadMessage;
+      loading(statusMessage)
       const formData = new FormData(form);
 
       let body = {};
@@ -382,10 +373,44 @@ window.addEventListener("DOMContentLoaded", function () {
       // }
       formData.forEach((val, key) => {
         body[key] = val;
-      })
-      console.log(body);
+      });
+      postData(body, () => {
+        statusMessage.textContent = successMessage;
+        closeText(2000);
+        form.reset();
+      }, (error) => {
+        statusMessage.textContent = errorMessage;
+        console.log(error);
+        closeText(1000)
+      });
+    });
+
+    const postData = (body, outputData, errorData) => {
+      const request = new XMLHttpRequest();
+      request.addEventListener('readystatechange', () => {
+
+        if (request.readyState !== 4) {
+          return;
+        }
+        if (request.readyState === 4 && request.status === 200) {
+          outputData();
+        } else {
+          errorData(request.status);
+        }
+      });
+      request.open('POST', './server.php');
+      request.setRequestHeader('Content-Type', 'application/json');
+
       request.send(JSON.stringify(body));
-    })
+    };
+
+    function closeText(time) {
+      setTimeout(function () {
+        statusMessage.textContent = ''
+      }, time);
+    }
   };
-  sendForm();
+  sendForm('form1');
+  sendForm('form2');
+  sendForm('form3');
 });
