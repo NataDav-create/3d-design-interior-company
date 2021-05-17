@@ -374,34 +374,40 @@ window.addEventListener("DOMContentLoaded", function () {
       formData.forEach((val, key) => {
         body[key] = val;
       });
-      postData(body, () => {
-        statusMessage.textContent = successMessage;
-        closeText(2000);
-        form.reset();
-      }, (error) => {
-        statusMessage.textContent = errorMessage;
-        console.log(error);
-        closeText(1000)
-      });
+      postData(body)
+        .then(data => {
+          console.log(data)
+          statusMessage.textContent = successMessage;
+          closeText(2000);
+          form.reset();
+        }).catch((error) => {
+          statusMessage.textContent = errorMessage;
+          console.log(error);
+          closeText(1000)
+        });
     });
 
-    const postData = (body, outputData, errorData) => {
-      const request = new XMLHttpRequest();
-      request.addEventListener('readystatechange', () => {
+    const postData = (body) => {
+      return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.addEventListener('readystatechange', () => {
 
-        if (request.readyState !== 4) {
-          return;
-        }
-        if (request.readyState === 4 && request.status === 200) {
-          outputData();
-        } else {
-          errorData(request.status);
-        }
-      });
-      request.open('POST', './server.php');
-      request.setRequestHeader('Content-Type', 'application/json');
+          if (request.readyState !== 4) {
+            return;
+          }
+          if (request.readyState === 4 && request.status === 200) {
+            console.log(request)
+            // outputData();
+            resolve(request);
+          } else {
+            reject(request.status);
+          }
+        });
+        request.open('POST', './server.php');
+        request.setRequestHeader('Content-Type', 'application/json');
 
-      request.send(JSON.stringify(body));
+        request.send(JSON.stringify(body));
+      })
     };
 
     function closeText(time) {
