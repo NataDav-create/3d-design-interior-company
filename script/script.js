@@ -362,21 +362,24 @@ window.addEventListener("DOMContentLoaded", function () {
     form.addEventListener('submit', e => {
       e.preventDefault();
       form.appendChild(statusMessage);
-      // statusMessage.textContent = loadMessage;
       loading(statusMessage)
       const formData = new FormData(form);
 
-      let body = {};
+      // let body = {};
       // for (let val of formData.entries()) {
       //   console.log(val);
       //   body[val[0]] = val[1];
       // }
-      formData.forEach((val, key) => {
-        body[key] = val;
-      });
+      // formData.forEach((val, key) => {
+      //   body[key] = val;
+      // });
+      let body = JSON.stringify(Object.fromEntries(formData.entries()));
       postData(body)
-        .then(data => {
-          console.log(data)
+        .then(response => {
+          if (response.status !== 200) {
+            throw new Error('status network not 200')
+          }
+          console.log(response)
           statusMessage.textContent = successMessage;
           closeText(2000);
           form.reset();
@@ -388,25 +391,12 @@ window.addEventListener("DOMContentLoaded", function () {
     });
 
     const postData = (body) => {
-      return new Promise((resolve, reject) => {
-        const request = new XMLHttpRequest();
-        request.addEventListener('readystatechange', () => {
-
-          if (request.readyState !== 4) {
-            return;
-          }
-          if (request.readyState === 4 && request.status === 200) {
-            console.log(request)
-            // outputData();
-            resolve(request);
-          } else {
-            reject(request.status);
-          }
-        });
-        request.open('POST', './server.php');
-        request.setRequestHeader('Content-Type', 'application/json');
-
-        request.send(JSON.stringify(body));
+      return fetch('./server.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
       })
     };
 
